@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อ่านโดจิน - [ชื่อโดจิน]</title>
+    <link rel="stylesheet" href="css/reader.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<style>
+    /* Sakura Theme Variables */
+    :root {
+        --sakura-light-pink: #FFB6C1;
+        --sakura-medium-pink: #FFB3BA;
+        --sakura-dark-pink: #FF69B4;
+        --sakura-background: #FFF0F5;
+        --text-color: #333;
+        --accent-color: #FF1493;
+    }
+
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Kanit', sans-serif;
+        background-color: var(--sakura-background);
+        color: var(--text-color);
+    }
+
+    /* Reader Container */
+    .reader-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+        background-color: white;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    /* Header Styles */
+    .reader-header {
+        background-color: var(--sakura-dark-pink);
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .back-button {
+        background: var(--sakura-medium-pink);
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+        background: var(--accent-color);
+    }
+
+    .doujin-title {
+        font-size: 1.5rem;
+        margin: 0;
+        color: white;
+    }
+
+    /* Page Viewer Styles */
+    .reader-main {
+        background-color: white;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .page-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .page-container {
+        max-width: 100%;
+        height: auto;
+        position: relative;
+        overflow: hidden;
+        border-radius: 5px;
+    }
+
+    .current-page {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        max-height: 80vh;
+        display: block;
+        margin: 0 auto;
+    }
+
+/* ปรับปรุง Navigation Buttons */
+.nav-button {
+    background: var(--sakura-medium-pink);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.nav-button:hover {
+    background: var(--accent-color);
+    transform: scale(1.1);
+}
+
+.nav-button:active {
+    transform: scale(0.95);
+}
+
+.nav-button i {
+    font-size: 1.2rem;
+}
+
+/* ปรับปรุง Page Indicator */
+.page-indicator {
+    text-align: center;
+    margin: 1rem 0;
+    padding: 0.5rem;
+}
+
+.page-counter {
+    display: inline-flex;
+    align-items: center;
+    background: var(--sakura-light-pink);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.page-counter span {
+    color: var(--text-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.page-counter .separator {
+    margin: 0 0.5rem;
+    color: var(--sakura-dark-pink);
+}
+
+/* ปรับปรุง Page Navigation Container */
+.page-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 1rem;
+}
+
+.page-viewer {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+/* Responsive Design Updates */
+@media (max-width: 768px) {
+    .nav-button {
+        width: 40px;
+        height: 40px;
+        position: fixed;
+        bottom: 50%;
+        transform: translateY(50%);
+        z-index: 100;
+    }
+
+    #prev-page {
+        left: 10px;
+    }
+
+    #next-page {
+        right: 10px;
+    }
+
+    .page-counter {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        background: rgba(255, 182, 193, 0.9);
+    }
+}
+
+/* เพิ่ม Animation สำหรับการเปลี่ยนหน้า */
+.current-page {
+    transition: opacity 0.3s ease;
+}
+
+.page-transition {
+    opacity: 0;
+}
+    /* Info Section */
+    .doujin-info {
+        background-color: var(--sakura-background);
+        border-radius: 10px;
+        padding: 1rem;
+    }
+
+    .info-section h2 {
+        color: var(--accent-color);
+        margin-bottom: 15px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .info-item i {
+        color: var(--sakura-dark-pink);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .reader-container {
+            padding: 0.5rem;
+        }
+
+        .doujin-title {
+            font-size: 1.2rem;
+        }
+
+        .current-page {
+            max-height: 90vh;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-navigation {
+            flex-direction: column;
+        }
+
+        .nav-button {
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 5px;
+        }
+    }
+
+    /* Fullscreen Mode */
+    .fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        background: white;
+    }
+
+    /* Page Indicator */
+    .page-indicator {
+        text-align: center;
+        margin-top: 1rem;
+        color: var(--text-color);
+        font-weight: bold;
+    }
+</style>
+<body>
+    <div class="reader-container">
+        <header class="reader-header">
+            <div class="header-content">
+                <button class="back-button" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left"></i> กลับ
+                </button>
+                <h1 class="doujin-title">Nicole Doujin</h1>
+                <div class="reader-controls">
+                    <button id="fullscreen-toggle">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+<!-- แก้ไขส่วน page-navigation ในโค้ด HTML -->
+<div class="page-navigation">
+    <button id="prev-page" class="nav-button">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    
+    <div class="page-viewer">
+        <div class="page-container">
+            <img src="images/A Dumb Sequel/page+1web.png" alt="หน้า 1" class="current-page">
+        </div>
+    </div>
+    
+    <button id="next-page" class="nav-button">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+</div>
+
+<div class="page-indicator">
+    <div class="page-counter">
+        <span id="current-page-number">1</span>
+        <span class="separator">/</span>
+        <span id="total-pages">27</span>
+    </div>
+</div>
+
+        <div class="doujin-info">
+            <div class="info-section">
+                <h2>รายละเอียด</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <i class="fas fa-user"></i>
+                        <span>ผู้วาด: [afrobull]</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-tags"></i>
+                        <span>แนว: Comic</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>จำนวนหน้า: 27</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>ปีที่ตีพิมพ์: 2024</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/A Dumb Sequel.js"></script>
+</body>
+</html>
